@@ -1,7 +1,7 @@
 # MiSTer_TTY_Scraper
 Image Scraper for MiSTer with TTGO T8 ESP32 and ILI9341
 
-This is designed for a TTGO T8 I had laying around attached to a ILI9341 320 x 240 Display. It needs a controller with SPIs for SD Card and Display along with WiFi.
+This is designed for a TTGO T8 I had laying around attached to a ILI9341 320 x 240 Display. It needs a controller with SPIs for SD Card and Display along with WiFi. My ESP32 has 4mb of PSRAM which is needed and used to convert the images, I doubt it will work without at least 4mb.
 
 This uses the uPNG library from elanthis [https://github.com/elanthis/upng/edit/master/README]
 
