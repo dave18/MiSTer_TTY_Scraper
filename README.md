@@ -1,6 +1,8 @@
 # MiSTer_TTY_Scraper
 Image Scraper for MiSTer with TTGO T8 ESP32 and ILI9341
 
+This uses the uPNG library from elanthis [https://github.com/elanthis/upng/edit/master/README]
+
 This utility uses the existing TTY2OLED script to listen for new cores being loaded. For new cores will attempt to display image using the following priority.
 1. Raw image file from SD Card
 2. PNG file from SD Card (will convert and save the raw image to SD Card first)
