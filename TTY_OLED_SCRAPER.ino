@@ -255,8 +255,10 @@ void loop() {
       }
       if (millis()>oldMillis+10000) {
         dispFlipflop=1-dispFlipflop;
-        if ((dispFlipflop==1) && (have_ingame)) show_ingame(actCorename.c_str());
-        if ((dispFlipflop==0) && (have_title)) show_title(actCorename.c_str());
+        if (core_loaded) {
+          if ((dispFlipflop==1) && (have_ingame)) show_ingame(actCorename.c_str());
+          if ((dispFlipflop==0) && (have_title)) show_title(actCorename.c_str());
+        }
         oldMillis=millis();
       }
       
@@ -282,8 +284,7 @@ void loop() {
     }
     else if (newCommand.startsWith("CMDCOR")) {                             // Command from Serial to receive Picture Data via USB Serial from the MiSTer
       have_title=0;
-      have_ingame=0;
-      core_loaded=1;
+      have_ingame=0;      
       String TextIn="",tT="";
       int d1=0;
       int i;  
@@ -298,6 +299,7 @@ void loop() {
         actCorename=TextIn;                              // Get Corename
         //tEffect=-1;                                      // Set Effect to -1 (Random)
 #ifdef XDEBUG
+
         Serial.printf("Received Text: %s, Transition T:None  Name Length:%d\n", (char*)actCorename.c_str(),actCorename.length());
 #endif
       }
@@ -305,11 +307,16 @@ void loop() {
         actCorename=TextIn.substring(0, d1);             // Extract Corename from Command String
       /*  tEffect=TextIn.substring(d1+1).toInt();          // Get Effect from Command String (set to 0 if not convertable)
         if (tEffect<-1) tEffect=-1;                      // Check Effect minimum
-        if (tEffect>maxEffect) tEffect=maxEffect;        // Check Effect maximum*/
+        if (tEffect>maxEffect) tEffect=maxEffect;        // Check Effect maximum*/        
 #ifdef XDEBUG
         Serial.printf("Received Text: %s, Transition information ignored   Name Length:%d\n", (char*)actCorename.c_str(),actCorename.length());
 #endif
-      }      
+      }
+      if (!strcmp("MENU",actCorename.c_str())) {       //is this just the menu
+        if (core_loaded) show_mister();
+        state=STATE_IDLE;                                                  //Unprocessed input, just go back to IDLE
+        break;
+      }
       if (actCorename.length()>1) state=RECEIVED_CORE; else state=STATE_IDLE;    //if we have a valid core name move onto next stage, otherwise back to IDLE
       
     }
@@ -320,6 +327,7 @@ void loop() {
     // ---------------------------------------------------
     // -- CORE NAME RECEIVED - CHECK IF ALREADY SCRAPED --
     // ---------------------------------------------------
+    core_loaded=1;
     show_mister();                                               //replace current display with mister logo
     ret=check_core(actCorename.c_str());
     if (ret) state=CHECK_PNGS; else state=SHOW_TITLE;
